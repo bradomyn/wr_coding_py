@@ -4,9 +4,16 @@ sys.path.append('./rs/')
 from rs_code import rs_code
 
 class fec_code:
+    pkt = 4
+    TRYING = 1
+    FAIL = 2
+    OK = 3
+    fec_container = [[]]
+    pkt_recv = 0
+    pkt_recv_id = []
 
     def __init__(self, code_id):
-        self.pkt = 4
+        fec_code.pkt = 4
         self.code_id = 1 # RS = 1 LDPC = 2 LT = 3
         self.pkt_id = 0
         self.block_symbol = 128
@@ -49,4 +56,23 @@ class fec_code:
 
         return fec_msg
 
+    def decode(self, msg):
 
+        fec_code.pkt_recv_id.insert(msg[2], 1)
+        fec_code.fec_container.insert(fec_code.pkt_recv, msg)
+
+        fec_code.pkt_recv += 1
+
+        self.code.decode(msg,)
+
+        if (msg[2] == 1 &  fec_code.pkt_recv_id[2]):
+
+        if (msg[2] == 1 | msg[2] == 2):
+            fec_code.fec_container.insert(fec_code.pkt_recv, msg)
+
+        if (msg[2] == 1 | msg[2] == 2):
+            fec_code.fec_container.insert(fec_code.pkt_recv, msg)
+
+        print len(fec_code.fec_container, 0)
+
+        return 1

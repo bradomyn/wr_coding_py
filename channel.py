@@ -17,3 +17,18 @@ def channel_errors(msg, n_k):
         msg[err] = 0x0
 
     return err_pkt
+
+def channel_pkt_err(fec_msg, err_max):
+
+    seed(10)
+
+    err_loc = []
+
+    pkt_lost = randrange(1, err_max, 3)
+
+    for i in range(0, pkt_lost):
+        pkt_miss = randrange(0, pkt_lost, 100)
+        del fec_msg[pkt_miss]
+        err_loc.append(pkt_miss)
+
+    return err_loc

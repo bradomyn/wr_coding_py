@@ -43,15 +43,21 @@ def main(argv):
 
     enc_msg = fec.encode(msg)
 
-    print enc_msg[0]
-    print enc_msg[1]
-    print enc_msg[2]
-    print enc_msg[3]
+    err = channel_pkt_err(enc_msg, fec.pkt)
 
+    print "Tx Packet - ", len(err), "lost packet"
 
-    #for i in range(0, len(msg_input)):
-    #   msg[i] = int(msg_input[i],16)
+    for i in range(0, len(enc_msg)):
+        fec_rslt = fec.decode(enc_msg[i])
 
+        if (fec_rslt == fec.OK):
+            print "Decoded Msg"
+            exit(0)
+        elif (fec_rslt == fec.TRYING):
+            continue
+        elif (fec_rslt == fec.FAIL):
+            print "Fail to decode!!!"
+            exit(2)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
