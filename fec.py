@@ -8,9 +8,7 @@ class fec_code:
     TRYING = 1
     FAIL = 2
     OK = 3
-    fec_container = [[]]
-    pkt_recv = 0
-    pkt_recv_id = []
+    dec_msg = []
 
     def __init__(self, code_id):
         fec_code.pkt = 4
@@ -19,6 +17,8 @@ class fec_code:
         self.block_symbol = 128
         self.pkt_ln = 512
         self.block_ln = 1024
+        fec_code.dec_msg = [0] * self.block_ln
+        self.recv_msg = 0
 
         if code_id == 1:
             self.code = rs_code()
@@ -58,21 +58,21 @@ class fec_code:
 
     def decode(self, msg):
 
-        fec_code.pkt_recv_id.insert(msg[2], 1)
-        fec_code.fec_container.insert(fec_code.pkt_recv, msg)
+        fec_msg = [0] * self.pkt_ln
+        msg_id  = msg[1]
 
-        fec_code.pkt_recv += 1
+        if (msg_id == 0 | msg_id == 1):
+            fec_code.dec_msg[msg_id * 512 : (msg_id + 1) * 512] = msg[3][:]
+            self.recv_msg += 250
 
-        self.code.decode(msg,)
+            if (self.recv_msg == 500):
+                return fec_code.OK
+        else:
+            #fec_msg[self.pkt_ln / 2 : 2 * self.pkt_ln /2 ] =  msg[3][:]
 
-        if (msg[2] == 1 &  fec_code.pkt_recv_id[2]):
+            #lost_pkt = range(self.pkt_ln / 2 , 2 * self.pkt_ln /2)
+            lost_pkt = range(1, 100)
 
-        if (msg[2] == 1 | msg[2] == 2):
-            fec_code.fec_container.insert(fec_code.pkt_recv, msg)
-
-        if (msg[2] == 1 | msg[2] == 2):
-            fec_code.fec_container.insert(fec_code.pkt_recv, msg)
-
-        print len(fec_code.fec_container, 0)
+            #self.code.decode(msg, lost_pkt)
 
         return 1
