@@ -19,8 +19,6 @@ def len_arg():
 
 def main(argv):
 
-    rs = rs_code()
-
     try:
         len_arg()
     except Exception:
@@ -40,21 +38,24 @@ def main(argv):
         elif opt == '-i':
             msg_file = arg
         elif opt == '-k':
-            rs.k = int(arg, 10)
+            k = int(arg, 10)
         elif opt == '-n':
-            rs.n = int(arg, 10)
+            n = int(arg, 10)
+
+    rs = rs_code(n,k)
 
     message = open(msg_file,'r')
-    msg_input = message.read().split(', ')
+    msg_input = message.read().split(' ')
     msg_in = [0] * len(msg_input)
 
     for i in range (0, len(msg_input)):
-        msg_in[i] = int(msg_input[i], 16)
+        msg_in[i] = int(msg_input[i],16)
 
     rs.print_poly("SRC_MSG", msg_in)
 
 # Encode
     msg = rs.encode(msg_in)
+    rs.print_poly("ENC_MSG_ENC", msg[:rs.k])
     rs.print_poly("ENC_MSG", msg)
 
 # Transmission the packets

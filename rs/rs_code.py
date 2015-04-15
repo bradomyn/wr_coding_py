@@ -5,8 +5,10 @@ class rs_code:
     n = 256
     n_k = 0
 
-    def __init__(self):
-        rs_code.n_k = self.n - self.k
+    def __init__(self, n, k):
+        rs_code.n = n
+        rs_code.k = k
+        rs_code.n_k = n - k
 
     def print_poly(self, name, poly):
         print name, ": ",
