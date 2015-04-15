@@ -1,0 +1,1 @@
+./rs.py -i message_8_n_16_k_8 -k 8 -n 16
