@@ -32,3 +32,16 @@ def channel_pkt_err(fec_msg, err_max):
         err_loc.append(pkt_miss)
 
     return err_loc
+
+def pkt_lost_x_2(x):
+
+    lost_pkt = range(1, x)
+    
+    return combi = [(a, b) for a in lost_pkt for b in lost_pkt]
+
+def pkt_lost_x_3(x):
+
+    lost_pkt = range(1, x)
+    
+    return combi = [(a, b, c) for a in lost_pkt for b in lost_pkt]
+
