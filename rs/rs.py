@@ -55,11 +55,15 @@ def main(argv):
 
 # Encode
     msg = rs.encode(msg_in)
-    rs.print_poly("ENC_MSG_ENC", msg[:rs.k])
+    rs.print_poly("ENC_MSG_ENC", msg[rs.k:])
+    print msg[rs.k:]
     rs.print_poly("ENC_MSG", msg)
 
 # Transmission the packets
     err = channel_errors(msg, rs.n_k)
+
+    #err = range(0, rs.k)
+    #msg[:rs.k] = [0] * rs.k
 
     print "Number of Errors in Tx", len(err)
     rs.print_poly("TX_MSG", msg)
@@ -68,7 +72,7 @@ def main(argv):
 
     rs.decode(msg, err)
 
-    rs.print_poly("DEC_MSG", msg)
+    rs.print_poly("DEC_MSG", msg[:rs.k])
 
 if __name__ == "__main__":
     main(sys.argv[1:])

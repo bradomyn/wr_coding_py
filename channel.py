@@ -1,16 +1,17 @@
 import sys
 from random import seed
 from random import randrange
+from random import randint
+import itertools
 
 def channel_errors(msg, n_k):
-    err_max = n_k /4
-    seed(10)
-    num_err = randrange(0, err_max, 3)
-    #num_err = randint(0, err_max)
+    err_max = n_k
+    seed()
+    num_err = randint(1, err_max)
     err_pkt = []
 
     for i in range (0, num_err):
-        err = randrange(0, num_err, 3)
+        err = randint(1, err_max)
         if err in err_pkt:
             continue
         err_pkt.append(err)
@@ -20,28 +21,51 @@ def channel_errors(msg, n_k):
 
 def channel_pkt_err(fec_msg, err_max):
 
-    seed(10)
+    seed()
 
     err_loc = []
 
-    pkt_lost = randrange(1, err_max, 3)
+    pkt_lost = randint(0, err_max)
 
     for i in range(0, pkt_lost):
-        pkt_miss = randrange(0, pkt_lost, 100)
+        pkt_miss = randint(0, pkt_lost)
         del fec_msg[pkt_miss]
         err_loc.append(pkt_miss)
 
     return err_loc
 
-def pkt_lost_x_2(x):
+def pkt_lost_no_rep(x, y): # combination of Y packets taken in X
+    pkt = map(str,range(0, y))
 
-    lost_pkt = range(1, x)
-    
-    return combi = [(a, b) for a in lost_pkt for b in lost_pkt]
+    pkt_lost = []
+    lost = []
 
-def pkt_lost_x_3(x):
+    pkt_lost_str = list(map(" ".join, itertools.permutations(pkt, x)))
 
-    lost_pkt = range(1, x)
-    
-    return combi = [(a, b, c) for a in lost_pkt for b in lost_pkt]
+    for i in range(0, len(pkt_lost_str)):
+        lost.append(pkt_lost_str[i].split(' '))
+        pkt_lost.append(map(int, lost[i]))
 
+    return pkt_lost
+
+def channel_lose_pkt(msg, lost):
+
+    for i in range(0,len(lost)):
+        del msg[lost[i]]
+
+def channel_print(combi_err):
+
+    print "Combination of Lost Packets", combi_err
+
+
+def pkt_lost_rep(x, y):
+    pkt = map(str,range(0, y))
+
+    pkt_lost = []
+
+    pkt_lost_str = list(map(" ".join, itertools.combinations(pkt, x)))
+
+    for i in range(0, len(pkt_lost_str)):
+        pkt_lost.append(pkt_lost_str[i].split(' '))
+
+    return pkt_lost
