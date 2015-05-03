@@ -51,7 +51,11 @@ def pkt_lost_no_rep(x, y): # combination of Y packets taken in X
 def channel_lose_pkt(msg, lost):
 
     for i in range(0,len(lost)):
-        del msg[lost[i]]
+        for j in range(0, len(msg)):
+            msg_s = msg[j]
+            if (msg_s[1] == lost[i]):
+                del msg[j]
+                break
 
 def channel_print(combi_err):
 

@@ -6,7 +6,7 @@ sys.path.append('./rs/')
 from rs_code import rs_code
 
 class fec_cfg:
-    op = [[] for l in range(0, 6) ]
+    op = [[] for l in range(0, 7) ]
 
     def __init__(self):
         fec_cfg.op[0] = {'pkt': 2, 'n': 256, 'k' : 128}
@@ -14,7 +14,9 @@ class fec_cfg:
         fec_cfg.op[2] = {'pkt': 4, 'n': 256, 'k' : 128}
         fec_cfg.op[3] = {'pkt': 4, 'n': 256, 'k' : 64}
         fec_cfg.op[4] = {'pkt': 2, 'n': 16,  'k' : 8}
-        fec_cfg.op[5] = {'pkt': 4, 'n': 16,  'k' : 8}
+        fec_cfg.op[5] = {'pkt': 4, 'n': 32,  'k' : 8}
+        fec_cfg.op[6] = {'pkt': 4, 'n': 64,  'k' : 32}
+
 
 
 class fec_code:
@@ -28,6 +30,7 @@ class fec_code:
     dec_msg = []
     recv_msg = []
     cfg = fec_cfg()
+    idx_map = []
 
 
     def __init__(self, code_id, fec_cfg, block_ln):
@@ -48,6 +51,7 @@ class fec_code:
         fec_code.dec_msg = [0] * self.block_ln
         fec_code.recv_msg = [0] * self.alpha
         self.pkt_id = 0
+        fec_code.idx_map = [0] * fec_code.pkt
 
         if code_id == 1:
             self.code = rs_code(cfg['n'], cfg['k'])
@@ -70,6 +74,7 @@ class fec_code:
 
     def encode(self, msg):
         fec_msg = [[] for l in range(0, self.pkt) ]
+        enc_pkt_cnt = 0
 
         # FEC header
         for i in range(0, self.pkt):
@@ -87,9 +92,17 @@ class fec_code:
             #systematic original msg
             index = i / slice_pkt
             fec_msg[index].append(enc_msg[: self.block_symbol])
-
+            #encoded data
             for j in range (0, self.beta):
                     fec_msg[index + self.alpha + j].append(enc_msg[self.block_symbol:])
+
+        #mapping between src and enc pkt
+            src_pkt_cntr = 0
+            for j in range(0, (self.beta * self.alpha)):
+                fec_code.idx_map[j + self.alpha] = src_pkt_cntr
+                if src_pkt_cntr < self.alpha - 1:
+                    src_pkt_cntr += 1
+
 
         return fec_msg
 
@@ -105,7 +118,8 @@ class fec_code:
             fec_code.dec_msg[slice : slice + self.block_symbol] = fec_msg
             fec_code.recv_msg[msg_id] =  1
         elif msg_id >= self.alpha:
-            if (fec_code.recv_msg[msg_id - self.alpha] == 0):
+            #if (fec_code.recv_msg[msg_id - self.alpha] == 0):
+            if (fec_code.recv_msg[fec_code.idx_map[msg_id]] == 0):
                 for i in range(0, self.pkt_ln / self.block_symbol):
                     missing_symb = [0] * self.block_symbol
                     msg = []
@@ -123,7 +137,8 @@ class fec_code:
                     slice = ((msg_id - self.alpha) * slice_pkt) + (self.block_symbol * i)
                     fec_code.dec_msg[slice : slice + self.block_symbol] = msg_f[:self.block_symbol]
 
-                fec_code.recv_msg[msg_id - self.alpha] = 1# pkt 0 (src_symbols) has the info in pkt 0+alpha
+                #fec_code.recv_msg[msg_id - self.alpha] = 1# pkt 0 (src_symbols) has the info in pkt 0+alpha
+                fec_code.recv_msg[fec_code.idx_map[msg_id]] = 1# pkt 0 (src_symbols) has the info in pkt 0+alpha
 
         #if (any(fec_code.recv_msg == 0 for fec_code.recv_msg in fec_code.recv_msg)):
         if (0 in fec_code.recv_msg):

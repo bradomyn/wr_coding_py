@@ -1,1 +1,0 @@
- python2.7 wr_fec.py -f 5 -i fec_message_16_8 -c 1 -l 32

@@ -1,0 +1,4 @@
+echo "Block 64 bits, n 16 k 8, 4 Pkt [src/2, src/2, code coded], 2 pkt lost"
+echo "*********************************************************************"
+ 
+ python2.7 wr_fec.py -f 7 -i message_64_16_8 -c 1 -b 64 -l 2
